@@ -1,0 +1,8 @@
+Important note: the map's size is currently set to initialize to 10x10.
+A later version will feature a dialog to dynamically set the size of the map.
+
+How to use:
+
+Left click a cell to set it to a Path cell.
+
+Right click a cell to set it to a Scenery cell.
