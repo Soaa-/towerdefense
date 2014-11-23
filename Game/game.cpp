@@ -2,11 +2,46 @@
 
 namespace TowerDefense {
 
+void Game::stepAdvanceCritters() {
+  for (auto critter : critters)
+    critter->move();
+  if (numCrittersToGenerate != 0) {
+    auto newCritter = CritterFactory::create(map->getEntrance(), level);
+    critters.push_back(unique_ptr<Critter>(newCritter));
+    --numCrittersToGenerate;
+  }
+}
+
+void Game::stepAttackCritters() {
+  for (auto tower : towers)
+    tower->attack();
+}
+
 Game::Game(unique_ptr<Map> map, QObject *parent) : QObject(parent) {}
 
-void Game::placeTower(int x, int y, TowerType type) {}
+void Game::placeTower(Coordinate coord, TowerType type) {
+  if (map->getCellType(coord) == CellType::PATH)
+    return;
+  else if (getTower(coord))
+    return;
+  else {
+    towers.push_back(unique_ptr<Tower>(TowerFactory::create(coord, type)));
+  }
+}
 
-void Game::run() {}
+void Game::run() {
+  while (!critters.empty()) {
+    stepAdvanceCritters();
+    stepAttackCritters();
+  }
+}
+
+BaseTower &Game::getTower(Coordinate coord) {
+  for (auto const& tower : towers)
+    if (tower->getCoord() == coord)
+      return *tower.get();
+  return nullptr;
+}
 
 void Game::debitCurrency(int amount) {}
 }

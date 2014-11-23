@@ -2,18 +2,26 @@
 
 namespace TowerDefense {
 
-Tower::Tower(int purchasePrice, int upgradePrice, int refundValue,
-             int attackRange, int attackPower, int rateOfFire, int level,
-             bool isAoe)
-    : purchasePrice(purchasePrice), upgradePrice(upgradePrice),
-      refundValue(refundValue), attackRange(attackRange),
-      attackPower(attackPower), rateOfFire(rateOfFire), level(level),
-      isAoe(isAoe) {}
+Tower::Tower(const CritterVector &critters, const Coordinate &coord,
+             int purchasePrice, int upgradePrice, int refundValue,
+             int attackRange, int attackPower, int rateOfFire)
+    : BaseTower(critters), HasCoordinate(coord), purchasePrice(purchasePrice),
+      upgradePrice(upgradePrice), refundValue(refundValue),
+      attackRange(attackRange), attackPower(attackPower),
+      rateOfFire(rateOfFire), level(1) {}
 
 Tower::Tower(const Tower &tower)
-    : Tower(tower.purchasePrice, tower.upgradePrice, tower.refundValue,
-            tower.attackRange, tower.attackPower, tower.rateOfFire, tower.level,
-            tower.isAoe) {}
+    : Tower(tower.coord, tower.purchasePrice, tower.upgradePrice,
+            tower.refundValue, tower.attackRange, tower.attackPower,
+            tower.rateOfFire, tower.level) {}
+
+vector<TowerType> Tower::getEnhancementTypes() const {
+  return vector<TowerType>();
+}
+
+void Tower::acquireTargets() {}
+
+void Tower::attack(Critter &target) { target->hit(attackPower); }
 
 void Tower::upgrade() {
   ++level;
@@ -23,28 +31,22 @@ void Tower::upgrade() {
   emit levelChanged(level, upgradePrice);
 }
 
-DirectDamageTower::DirectDamageTower()
-    : Tower(50, 10, 10, 5, 10, 1, 1, false) {}
+void BaseTower::attack() {
+  auto targets = this->acquireTargets();
+  for (auto target : targets)
+    this->attack(*target);
+}
 
-AoeDamageTower::AoeDamageTower() : Tower(75, 15, 15, 5, 10, 1, 1, true) {}
+vector<TowerType> AoeEnhancement::getEnhancementTypes() const {
+  return tower->getEnhancementTypes().push_back(TowerType::AOE);
+}
 
-SlowingTower::SlowingTower() : Tower(50, 10, 10, 6, 10, 1, 1, false) {}
+vector<TowerType> SlowingEnhancement::getEnhancementTypes() const {
+  return tower->getEnhancementTypes().push_back(TowerType::SLOWING);
+}
 
-AdditionalDamageTower::AdditionalDamageTower()
-  : Tower(75, 15, 15, 5, 14, 1, 1, false) {}
-
-Tower *towerFactory(TowerType type)
-{
-  switch (type) {
-  case TowerType::DIRECT_DAMAGE:
-    return new DirectDamageTower();
-  case TowerType::AOE_DAMAGE:
-    return new AoeDamageTower();
-  case TowerType::SLOWING:
-    return new SlowingTower();
-  case TowerType::ADDITIONAL_DAMAGE:
-    return new AdditionalDamageTower();
-  }
+vector<TowerType> BurningEnhancement::getEnhancementTypes() const {
+  return tower->getEnhancementTypes().push_back(TowerType::BURNING);
 }
 
 } // namespace TowerDefense

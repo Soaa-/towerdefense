@@ -126,6 +126,10 @@ shared_ptr<Cell> Map::getCell(int x, int y) const {
 
 CellType Map::getCellType(int x, int y) const { return grid[y][x]->getType(); }
 
+CellType Map::getCellType(Coordinate coord) const {
+  return getCellType(coord.x, coord.y);
+}
+
 void Map::setCellToType(int x, int y, CellType type) {
   grid.at(y).at(x)->setCellToType(type);
 }
@@ -142,10 +146,7 @@ void Map::setExit(int x, int y) {
   emit stateChanged();
 }
 
-void Map::onTowerLevelChanged(int, int cost)
-{
-
-}
+void Map::onTowerLevelChanged(int, int cost) {}
 
 bool Map::isValid() const {
   // make sure coordinates are set properly

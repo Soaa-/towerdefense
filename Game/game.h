@@ -4,9 +4,9 @@
 #include <QObject>
 #include <vector>
 #include <memory>
-#include "Game/map.h"
-#include "Game/tower.h"
-#include "Game/critter.h"
+#include "map.h"
+#include "tower.h"
+#include "critter.h"
 
 namespace TowerDefense {
 
@@ -17,9 +17,11 @@ class Game : public QObject
 {
   Q_OBJECT
 private:
+  int level;
+  int numCrittersToGenerate;
   int currency;
   unique_ptr<Map> map;
-  vector<unique_ptr<Tower>> towers;
+  vector<unique_ptr<BaseTower>> towers;
   vector<unique_ptr<Critter>> critters;
 
   void stepAdvanceCritters();
@@ -27,13 +29,15 @@ private:
 
 public:
   explicit Game(unique_ptr<Map> map, QObject *parent = 0);
-  void placeTower(int x, int y, TowerType type);
+
+  void placeTower(Coordinate coord, TowerType type);
   void run();
 
-  Tower *getTower(int x, int y);
+  BaseTower &getTower(Coordinate coord);
 
 signals:
   void mapCellChanged(int x, int y, CellType type);
+  void newCritter(Critter &critter);
   void critterChanged(Critter &critter);
   void towerChanged(Tower &tower);
   void currencyChanged(int amount);

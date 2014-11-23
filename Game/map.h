@@ -5,7 +5,8 @@
 #include <QTextStream>
 #include <vector>
 #include <memory>
-#include <Game/cell.h>
+#include <cell.h>
+#include <coordinate.h>
 
 namespace TowerDefense {
 
@@ -40,6 +41,7 @@ public:
   int getSizeY() const;
   shared_ptr<Cell> getCell(int x, int y) const;
   CellType getCellType(int x, int y) const;
+  CellType getCellType(Coordinate coord) const;
   bool isValid() const;
   bool isEntrance(int x, int y) const;
   bool isExit(int x, int y) const;
