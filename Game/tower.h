@@ -16,22 +16,33 @@ using CritterVector = vector<unique_ptr<Critter>>;
 
 enum class TowerType { BASIC, AOE, SLOWING, BURNING };
 
-class BaseTower {
+class BaseTower : public virtual IHasCoordinate {
 protected:
   CritterVector &critters;
-
-  virtual vector<Critter *> acquireTargets() = 0;
-  virtual void attack(Critter &critter) = 0;
 
 public:
   BaseTower(CritterVector &critters) : critters(critters) {}
   virtual ~BaseTower() {}
 
   void attack();
+
+  virtual vector<Critter *> acquireTargets() = 0;
+  virtual void attack(Critter &critter) = 0;
+
+  virtual int getPurchasePrice() const = 0;
+  virtual int getUpgradePrice() const = 0;
+  virtual int getRefundValue() const = 0;
+  virtual int getAttackRange() const = 0;
+  virtual int getAttackPower() const = 0;
+  virtual int getRateOfFire() const = 0;
+  virtual int getLevel() const = 0;
+
   virtual vector<TowerType> getEnhancementTypes() const = 0;
 };
 
-class Tower : public QObject, public BaseTower, public HasCoordinate {
+class Tower : public QObject,
+              public BaseTower,
+              public HasCoordinate {
   Q_OBJECT
 protected:
   int purchasePrice;
@@ -53,13 +64,13 @@ public:
   // Tower(const Tower &tower);
   virtual ~Tower() {}
 
-  int getPurchasePrice() const { return purchasePrice; }
-  int getUpgradePrice() const { return upgradePrice; }
-  int getRefundValue() const { return refundValue; }
-  int getAttackRange() const { return attackRange; }
-  int getAttackPower() const { return attackPower; }
-  int getRateOfFire() const { return rateOfFire; }
-  int getLevel() const { return level; }
+  virtual int getPurchasePrice() const { return purchasePrice; }
+  virtual int getUpgradePrice() const { return upgradePrice; }
+  virtual int getRefundValue() const { return refundValue; }
+  virtual int getAttackRange() const { return attackRange; }
+  virtual int getAttackPower() const { return attackPower; }
+  virtual int getRateOfFire() const { return rateOfFire; }
+  virtual int getLevel() const { return level; }
 
   virtual vector<TowerType> getEnhancementTypes() const;
 
@@ -71,19 +82,36 @@ signals:
 };
 
 class TowerEnhancement : public BaseTower {
-private:
+protected:
   unique_ptr<BaseTower> tower;
+
+  virtual vector<Critter *> acquireTargets() { return tower->acquireTargets(); }
+  virtual void attack(Critter &critter) { tower->attack(critter); }
 
 public:
   TowerEnhancement(CritterVector &critters, unique_ptr<BaseTower> tower)
       : BaseTower(critters), tower(std::move(tower)) {}
   virtual ~TowerEnhancement() {}
+
+  virtual Coordinate getCoord() const { return tower->getCoord(); }
+  virtual int distanceTo(const IHasCoordinate &other) const {
+    return tower->distanceTo(other);
+  }
+  virtual int getPurchasePrice() const { return tower->getPurchasePrice(); }
+  virtual int getUpgradePrice() const { return tower->getUpgradePrice(); }
+  virtual int getRefundValue() const { return tower->getRefundValue(); }
+  virtual int getAttackRange() const { return tower->getAttackRange(); }
+  virtual int getAttackPower() const { return tower->getAttackPower(); }
+  virtual int getRateOfFire() const { return tower->getRateOfFire(); }
+  virtual int getLevel() const { return tower->getLevel(); }
+
+  virtual void attack();
 };
 
 class AoeEnhancement : public TowerEnhancement {
 protected:
   virtual vector<Critter *> acquireTargets();
-  virtual void attack(Critter &critter);
+
 public:
   AoeEnhancement(CritterVector &critters, unique_ptr<BaseTower> tower)
       : TowerEnhancement(critters, std::move(tower)) {}
@@ -94,8 +122,8 @@ public:
 
 class SlowingEnhancement : public TowerEnhancement {
 protected:
-  virtual vector<Critter *> acquireTargets();
   virtual void attack(Critter &critter);
+
 public:
   SlowingEnhancement(CritterVector &critters, unique_ptr<BaseTower> tower)
       : TowerEnhancement(critters, std::move(tower)) {}
@@ -106,8 +134,8 @@ public:
 
 class BurningEnhancement : public TowerEnhancement {
 protected:
-  virtual vector<Critter *> acquireTargets();
   virtual void attack(Critter &critter);
+
 public:
   BurningEnhancement(CritterVector &critters, unique_ptr<BaseTower> tower)
       : TowerEnhancement(critters, std::move(tower)) {}

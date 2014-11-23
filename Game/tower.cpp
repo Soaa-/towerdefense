@@ -19,7 +19,16 @@ vector<TowerType> Tower::getEnhancementTypes() const {
   return vector<TowerType>();
 }
 
-void Tower::acquireTargets() {}
+vector<Critter *> Tower::acquireTargets() {
+  auto range = getAttackRange();
+  vector<Critter *> result;
+  for (auto critter : critters)
+    if (distanceTo(critter) <= range)
+      result.push_back(critter.get());
+  std::sort(result.begin(), result.end(), targeter->comparator);
+  vector<Critter *> ret(1, result[0]);
+  return ret;
+}
 
 void Tower::attack(Critter &target) { target->hit(attackPower); }
 
@@ -37,6 +46,17 @@ void BaseTower::attack() {
     this->attack(*target);
 }
 
+vector<Critter *> AoeEnhancement::acquireTargets() {
+  auto range = getAttackRange();
+  vector<Critter *> result;
+  for (auto critter : critters)
+    if (distanceTo(critter) <= range)
+      result.push_back(critter.get());
+  return result;
+}
+
+void AoeEnhancement::attack(Critter &critter) { tower->attack(critter); }
+
 vector<TowerType> AoeEnhancement::getEnhancementTypes() const {
   return tower->getEnhancementTypes().push_back(TowerType::AOE);
 }
@@ -48,5 +68,7 @@ vector<TowerType> SlowingEnhancement::getEnhancementTypes() const {
 vector<TowerType> BurningEnhancement::getEnhancementTypes() const {
   return tower->getEnhancementTypes().push_back(TowerType::BURNING);
 }
+
+void TowerEnhancement::attack() { tower->attack(); }
 
 } // namespace TowerDefense

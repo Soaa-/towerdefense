@@ -1,6 +1,8 @@
 #ifndef COORDINATE_H
 #define COORDINATE_H
 
+#include "math.h"
+
 namespace TowerDefense {
 
 struct Coordinate {
@@ -9,6 +11,15 @@ struct Coordinate {
 
   Coordinate(int x, int y) : x(x), y(y) {}
   Coordinate(const Coordinate &coord) : x(coord.x), y(coord.y) {}
+
+  /**
+   * @brief distanceTo Simple triangular distance.
+   * @param coord
+   * @return
+   */
+  int distanceTo(const Coordinate &coord) const {
+    return (abs(x - coord.x) + abs(y - coord.y));
+  }
 
   bool operator==(const Coordinate &coord) {
     return (x == coord.x && y == coord.y);
@@ -39,7 +50,13 @@ struct Coordinate {
   }
 };
 
-class HasCoordinate {
+class IHasCoordinate {
+public:
+  virtual Coordinate getCoord() const = 0;
+  virtual int distanceTo(const IHasCoordinate &other) const = 0;
+};
+
+class HasCoordinate : public virtual IHasCoordinate {
 protected:
   Coordinate coord;
 
@@ -47,7 +64,11 @@ public:
   HasCoordinate(int x, int y) : coord(x, y) {}
   HasCoordinate(const Coordinate &coord) : coord(coord) {}
 
-  Coordinate getCoord() const { return coord; }
+  virtual Coordinate getCoord() const { return coord; }
+
+  virtual int distanceTo(const IHasCoordinate &other) const {
+    return coord.distanceTo(other.getCoord());
+  }
 };
 }
 

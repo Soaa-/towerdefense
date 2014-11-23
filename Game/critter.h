@@ -39,6 +39,8 @@ public:
   void freeze(int turns) { numTurnsFrozen = turns; }
   void burn(int damage) { damagePerTurn = damage; }
 
+  int getHp() const { return hp; }
+
 signals:
   void death(int reward);
 };
