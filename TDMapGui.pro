@@ -25,7 +25,11 @@ SOURCES += main.cpp\
     Ui/towerinspectordialog.cpp \
     Graphics/critteritem.cpp \
     Game/attack.cpp \
-    Game/targeter.cpp
+    Game/targeter.cpp \
+    Game/observer.cpp \
+    Game/subject.cpp \
+    Game/critterobserver.cpp \
+    Game/towerobserver.cpp
 
 HEADERS  += \
     Game/critter.h \
@@ -41,7 +45,11 @@ HEADERS  += \
     Game/map.h \
     Game/coordinate.h \
     Game/attack.h \
-    Game/targeter.h
+    Game/targeter.h \
+    Game/observer.h \
+    Game/subject.h \
+    Game/towerobserver.h \
+    Game/critterobserver.h \
 
 FORMS    += Ui/createmapdialog.ui \
     Ui/placetowerdialog.ui \
