@@ -58,7 +58,7 @@ protected:
   virtual void attack(Critter &target);
 
 public:
-  Tower(const CritterVector &critters, const Coordinate &coord,
+  Tower(CritterVector &critters, const Coordinate &coord,
         int purchasePrice, int upgradePrice, int refundValue, int attackRange,
         int attackPower, int rateOfFire);
   // Tower(const Tower &tower);

@@ -24,6 +24,8 @@ private:
   vector<unique_ptr<BaseTower>> towers;
   vector<unique_ptr<Critter>> critters;
 
+  TowerFactory towerFactory;
+
   void stepAdvanceCritters();
   void stepAttackCritters();
 
@@ -35,7 +37,7 @@ public:
 
   void run();
 
-  BaseTower &getTower(Coordinate coord);
+  BaseTower *getTower(Coordinate coord);
 
 signals:
   void mapCellChanged(int x, int y, CellType type);

@@ -2,9 +2,7 @@
 
 namespace TowerDefense {
 
-CellType &Map::getCell(Coordinate coord) const {
-  return grid[coord.y][coord.x];
-}
+CellType &Map::getCell(Coordinate coord) { return grid[coord.y][coord.x]; }
 
 void Map::createCell(int x, int y) { grid[y][x] = CellType::SCENERY; }
 
@@ -12,29 +10,24 @@ void Map::generatePath() {
   // sanity check
   if (!isValid())
     return;
-  if (entrance == exit)
-    return false;
 
   // first coord is entrance
   path.push_back(entrance);
 
   // keep pushing next path cell into path
-  Coordinate *cur = &entrance;
-  Coordinate *next = getNext(cur);
+  auto cur = unique_ptr<Coordinate>(new Coordinate(entrance));
+  auto next = getNext(*cur);
   while (*next != exit) {
-    if (!next) // sanity check
-      return false;
     path.push_back(*next); // push
 
     // advance cursor
-    auto newCur = next;
-    next = getNext(next, cur);
-    cur = newCur;
+    auto newCur = std::move(next);
+    next = getNext(*newCur, *cur);
+    cur = std::move(newCur);
   }
 
   // finally push exit
   path.push_back(exit);
-  return true;
 }
 
 int Map::getNumPathNeighbors(Coordinate coord) const {
@@ -66,13 +59,14 @@ int Map::getNumPathNeighbors(Coordinate coord) const {
   return numNeighbors;
 }
 
-Coordinate *Map::getNext(Coordinate *coord) const {
+unique_ptr<Coordinate> Map::getNext(Coordinate coord) const {
   return getNext(coord, nullptr);
 }
 
-Coordinate *Map::getNext(Coordinate *coord, Coordinate *prev) const {
-  int x = coord->x;
-  int y = coord->y;
+unique_ptr<Coordinate> Map::getNext(Coordinate coord,
+                                    const unique_ptr<Coordinate> prev) const {
+  int x = coord.x;
+  int y = coord.y;
   int expectedNumPathNeighbors; // 1 if entrance or exit, 2 otherwise
   if (prev)
     expectedNumPathNeighbors = 2;
@@ -80,32 +74,32 @@ Coordinate *Map::getNext(Coordinate *coord, Coordinate *prev) const {
     expectedNumPathNeighbors = 1;
 
   if (getNumPathNeighbors(coord) != expectedNumPathNeighbors)
-    return nullptr;
+    return unique_ptr<Coordinate>(nullptr);
   try {
-    Coordinate next(x, y - 1);
-    if (getCellType(next) == CellType::PATH && next != *prev)
-      return next;
+    auto next = new Coordinate(x, y - 1);
+    if (getCellType(*next) == CellType::PATH && *next != *prev)
+      return unique_ptr<Coordinate>(next);
   } catch (std::out_of_range) {
   }
   try {
-    Coordinate next(x, y + 1);
-    if (getCellType(next) == CellType::PATH && next != *prev)
-      return next;
+    auto next = new Coordinate(x, y + 1);
+    if (getCellType(*next) == CellType::PATH && *next != *prev)
+      return unique_ptr<Coordinate>(next);
   } catch (std::out_of_range) {
   }
   try {
-    Coordinate next(x - 1, y);
-    if (getCellType(next) == CellType::PATH && next != *prev)
-      return next;
+    auto next = new Coordinate(x - 1, y);
+    if (getCellType(*next) == CellType::PATH && *next != *prev)
+      return unique_ptr<Coordinate>(next);
   } catch (std::out_of_range) {
   }
   try {
-    Coordinate next(x + 1, y);
-    if (getCellType(next) == CellType::PATH && next != *prev)
-      return next;
+    auto next = new Coordinate(x + 1, y);
+    if (getCellType(*next) == CellType::PATH && *next != *prev)
+      return unique_ptr<Coordinate>(next);
   } catch (std::out_of_range) {
   }
-  return nullptr;
+  return unique_ptr<Coordinate>(nullptr);
 }
 
 Map::Map(int sizeX, int sizeY)
@@ -138,27 +132,27 @@ int Map::getSizeX() const { return grid[0].size(); }
 
 int Map::getSizeY() const { return grid.size(); }
 
-CellType Map::getCellType(int x, int y) const { return grid[y][x]; }
-
 CellType Map::getCellType(Coordinate coord) const {
-  return getCellType(coord.x, coord.y);
+  return grid[coord.y][coord.x];
 }
+
+Coordinate Map::getEntrance() const { return entrance; }
 
 void Map::setCellToType(Coordinate coord, CellType type) {
   grid.at(coord.y).at(coord.x) = type;
-  emit stateChanged();
+  emit cellTypeChanged(coord, type);
 }
 
 void Map::setEntrance(Coordinate coord) {
   setCellToType(coord, CellType::PATH);
   entrance = coord;
-  emit stateChanged();
+  emit entranceChanged(coord);
 }
 
 void Map::setExit(Coordinate coord) {
   setCellToType(coord, CellType::PATH);
   exit = coord;
-  emit stateChanged();
+  emit exitChanged(coord);
 }
 
 bool Map::isValid() const {
@@ -166,16 +160,16 @@ bool Map::isValid() const {
   if (entrance == exit)
     return false;
 
-  Coordinate *cur = &entrance;
-  Coordinate *next = getNext(cur);
+  auto cur = unique_ptr<Coordinate>(new Coordinate(entrance));
+  auto next = getNext(*cur);
   while (*next != exit) {
     if (!next) // no next cell
       return false;
 
     // advance cursor
-    auto newCur = next;
-    next = getNext(next, cur);
-    cur = newCur;
+    auto newCur = std::move(next);
+    next = getNext(*next, *cur);
+    cur = std::move(newCur);
   }
 
   return true;
@@ -201,6 +195,7 @@ QTextStream &operator<<(QTextStream &stream, const Map &map) {
     }
     stream << "\n";
   }
+  return stream;
 }
 
 } // namespace TowerDefense

@@ -3,7 +3,7 @@
 namespace TowerDefense {
 
 void Game::stepAdvanceCritters() {
-  for (auto critter : critters)
+  for (auto &critter : critters)
     critter->move();
   if (numCrittersToGenerate != 0) {
     auto newCritter = CritterFactory::create(map->getEntrance(), level);
@@ -13,11 +13,12 @@ void Game::stepAdvanceCritters() {
 }
 
 void Game::stepAttackCritters() {
-  for (auto tower : towers)
+  for (auto &tower : towers)
     tower->attack();
 }
 
-Game::Game(unique_ptr<Map> map, QObject *parent) : QObject(parent) {}
+Game::Game(unique_ptr<Map> map, QObject *parent)
+    : QObject(parent), map(std::move(map)), towerFactory(critters) {}
 
 void Game::placeTower(Coordinate coord, TowerType type) {
   if (map->getCellType(coord) == CellType::PATH)
@@ -25,7 +26,7 @@ void Game::placeTower(Coordinate coord, TowerType type) {
   else if (getTower(coord))
     return;
   else {
-    towers.push_back(unique_ptr<Tower>(TowerFactory::create(coord, type)));
+    towers.push_back(unique_ptr<BaseTower>(towerFactory.create(coord, type)));
   }
 }
 
@@ -36,10 +37,10 @@ void Game::run() {
   }
 }
 
-BaseTower &Game::getTower(Coordinate coord) {
-  for (auto const& tower : towers)
+BaseTower *Game::getTower(Coordinate coord) {
+  for (auto const &tower : towers)
     if (tower->getCoord() == coord)
-      return *tower.get();
+      return tower.get();
   return nullptr;
 }
 

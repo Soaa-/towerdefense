@@ -22,7 +22,7 @@ public:
         reward(reward) {}
   ~Critter() {}
 
-  void move(Coordinate coord) {
+  void move() {
     hp -= damagePerTurn;
     if (numTurnsFrozen > 0)
       --numTurnsFrozen;

@@ -23,7 +23,7 @@ private:
   vector<vector<CellType>> grid;
   vector<Coordinate> path;
 
-  CellType &getCell(Coordinate coord) const;
+  CellType &getCell(Coordinate coord);
 
   void createCell(int x, int y);
 
@@ -34,8 +34,9 @@ private:
   void generatePath();
 
   int getNumPathNeighbors(Coordinate coord) const;
-  Coordinate *getNext(Coordinate *coord) const;
-  Coordinate *getNext(Coordinate *coord, Coordinate *prev) const;
+  unique_ptr<Coordinate> getNext(Coordinate coord) const;
+  unique_ptr<Coordinate> getNext(Coordinate coord, Coordinate prev) const;
+  unique_ptr<Coordinate> getNext(Coordinate coord, const unique_ptr<Coordinate> prev) const;
 
 public:
   Map(int sizeX, int sizeY);
@@ -43,6 +44,8 @@ public:
   int getSizeX() const;
   int getSizeY() const;
   CellType getCellType(Coordinate coord) const;
+
+  Coordinate getEntrance() const;
 
   bool isValid() const;
   bool isEntrance(Coordinate coord) const;
@@ -57,6 +60,7 @@ public:
   friend QTextStream &operator<<(QTextStream &os, const Map &map);
 
 signals:
+  void cellTypeChanged(Coordinate coord, CellType type);
   void entranceChanged(Coordinate coord);
   void exitChanged(Coordinate coord);
 };

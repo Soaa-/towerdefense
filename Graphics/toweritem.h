@@ -5,12 +5,7 @@
 #include <QPainter>
 #include "Game/tower.h"
 
-enum class TowerType {
-  BASIC,
-  AOE,
-  FREEZE,
-  BURN
-};
+using TowerDefense::TowerType;
 
 class TowerItem : public QGraphicsObject {
   Q_OBJECT
@@ -32,11 +27,11 @@ public:
       pen.setColor(QColor(127, 0, 0));
       brush.setColor(QColor(180, 0, 0));
       break;
-    case TowerType::FREEZE:
+    case TowerType::SLOWING:
       pen.setColor(QColor(127, 127, 0));
       brush.setColor(QColor(180, 180, 0));
       break;
-    case TowerType::BURN:
+    case TowerType::BURNING:
       pen.setColor(QColor(31, 31, 31));
       brush.setColor(QColor(63, 63, 63));
       break;
