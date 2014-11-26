@@ -31,6 +31,8 @@ public:
   explicit Game(unique_ptr<Map> map, QObject *parent = 0);
 
   void placeTower(Coordinate coord, TowerType type);
+  void upgradeTower(Coordinate coord);
+
   void run();
 
   BaseTower &getTower(Coordinate coord);

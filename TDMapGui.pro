@@ -14,7 +14,6 @@ TEMPLATE = app
 CONFIG   += c++11
 
 SOURCES += main.cpp\
-    Game/cell.cpp \
     Game/game.cpp \
     Game/map.cpp \
     Game/tower.cpp \
@@ -28,7 +27,7 @@ SOURCES += main.cpp\
     Game/attack.cpp \
     Game/targeter.cpp
 
-HEADERS  += Game/cell.h \
+HEADERS  += \
     Game/critter.h \
     Game/game.h \
     Game/tower.h \
