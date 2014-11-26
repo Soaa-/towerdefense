@@ -35,8 +35,7 @@ private:
 
   int getNumPathNeighbors(Coordinate coord) const;
   unique_ptr<Coordinate> getNext(Coordinate coord) const;
-  unique_ptr<Coordinate> getNext(Coordinate coord, Coordinate prev) const;
-  unique_ptr<Coordinate> getNext(Coordinate coord, const unique_ptr<Coordinate> prev) const;
+  unique_ptr<Coordinate> getNext(Coordinate coord, const unique_ptr<Coordinate> &prev) const;
 
 public:
   Map(int sizeX, int sizeY);

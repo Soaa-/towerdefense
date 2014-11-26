@@ -22,7 +22,7 @@ void Map::generatePath() {
 
     // advance cursor
     auto newCur = std::move(next);
-    next = getNext(*newCur, *cur);
+    next = getNext(*newCur, cur);
     cur = std::move(newCur);
   }
 
@@ -64,7 +64,7 @@ unique_ptr<Coordinate> Map::getNext(Coordinate coord) const {
 }
 
 unique_ptr<Coordinate> Map::getNext(Coordinate coord,
-                                    const unique_ptr<Coordinate> prev) const {
+                                    const unique_ptr<Coordinate> &prev) const {
   int x = coord.x;
   int y = coord.y;
   int expectedNumPathNeighbors; // 1 if entrance or exit, 2 otherwise
@@ -168,7 +168,7 @@ bool Map::isValid() const {
 
     // advance cursor
     auto newCur = std::move(next);
-    next = getNext(*next, *cur);
+    next = getNext(*next, cur);
     cur = std::move(newCur);
   }
 

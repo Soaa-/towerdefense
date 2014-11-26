@@ -4,6 +4,7 @@
 #include <QObject>
 #include <vector>
 #include <memory>
+#include <algorithm>
 #include "coordinate.h"
 #include "targeter.h"
 #include "critter.h"

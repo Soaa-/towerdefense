@@ -10,11 +10,6 @@ Tower::Tower(CritterVector &critters, const Coordinate &coord,
       attackRange(attackRange), attackPower(attackPower),
       rateOfFire(rateOfFire), level(1) {}
 
-Tower::Tower(const Tower &tower)
-    : Tower(tower.coord, tower.purchasePrice, tower.upgradePrice,
-            tower.refundValue, tower.attackRange, tower.attackPower,
-            tower.rateOfFire, tower.level) {}
-
 vector<TowerType> Tower::getEnhancementTypes() const {
   return vector<TowerType>();
 }
@@ -22,8 +17,8 @@ vector<TowerType> Tower::getEnhancementTypes() const {
 vector<Critter *> Tower::acquireTargets() {
   auto range = getAttackRange();
   vector<Critter *> result;
-  for (auto critter : critters)
-    if (distanceTo(critter) <= range)
+  for (auto &critter : critters)
+    if (distanceTo(*critter) <= range)
       result.push_back(critter.get());
   std::sort(result.begin(), result.end(), targeter->comparator);
   vector<Critter *> ret(1, result[0]);
