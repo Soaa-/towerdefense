@@ -4,6 +4,21 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include "Game/game.h"
+#include "Graphics/mapitem.h"
+#include "Graphics/toweritem.h"
+#include "Graphics/critteritem.h"
+
+using namespace TowerDefense;
+
+enum class GameState {
+  IDLE,
+  EDIT_MAP_DRAW,
+  EDIT_MAP_SET_ENTRANCE,
+  EDIT_MAP_SET_EXIT,
+  PLAY_TURN,
+  PLAY_INTERMISSION_SELECT_TOWER,
+  PLAY_INTERMISSION_PLACE_TOWER
+};
 
 class GameScene : public QGraphicsScene
 {
@@ -14,21 +29,16 @@ private:
   QVector<TowerItem *> towerItems;
   QVector<CritterItem *> critterItems;
 
-  enum class GameState {
-    EDIT_MAP_DRAW,
-    EDIT_MAP_SET_ENTRANCE,
-    EDIT_MAP_SET_EXIT,
-    PLAY_TURN,
-    PLAY_INTERMISSION_SELECT_TOWER,
-    PLAY_INTERMISSION_PLACE_TOWER
-  };
+  GameState state;
 
 public:
-  explicit GameScene(QObject *parent = 0);
+
+  explicit GameScene(Game &game, QObject *parent = 0);
 
   virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
   void updateMap();
+  void setState(GameState state);
 
 signals:
 

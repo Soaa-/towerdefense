@@ -1,6 +1,11 @@
 #include "gamescene.h"
 
-GameScene::GameScene(QObject *parent) :
-  QGraphicsScene(parent)
+GameScene::GameScene(Game &game, QObject *parent)
+  : QGraphicsScene(parent), game(game) {}
+
+void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+
 }
+
+void GameScene::setState(GameState state) { this->state = state; }

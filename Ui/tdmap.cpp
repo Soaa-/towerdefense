@@ -12,21 +12,19 @@ TdMap::~TdMap() { delete ui; }
 void TdMap::on_actionPurchase_Tower_triggered() {
   auto dialog = new PlaceTowerDialog(this);
   if (dialog->exec()) {
-    mapScene->setNextTowerType(dialog->getTowerType());
-    mapScene->setState(MapUiState::PLACE_TOWER);
+    // TODO: Place Tower
   }
 }
 
 void TdMap::on_actionNew_Game_triggered() {
   auto dialog = new CreateMapDialog(this);
   if (dialog->exec()) {
-    map =
-        make_shared<TowerDefense::Map>(dialog->getHSize(), dialog->getVSize());
-    mapScene = new MapScene(this, map);
-    ui->graphicsView->setScene(mapScene);
-    connect(mapScene, SIGNAL(selectedTower(Tower *)), this,
-            SLOT(onOpenTowerInspector(Tower *)));
-    connect(map.get(), SIGNAL(cashChanged(int)), this, SLOT(onCashChange(int)));
+    map = new Map(dialog->getHSize(), dialog->getVSize(), this);
+    game = new Game(unique_ptr<Map>(map), this);
+    // TODO: Make ownership semantics more consistent, maybe...
+    gameScene = new GameScene(*game, this);
+    ui->graphicsView->setScene(gameScene);
+    gameBegin(); // TODO: Implement gameBegin()
   }
 }
 
@@ -36,12 +34,12 @@ void TdMap::on_actionLoad_Map_triggered() {
   if (!mapFile.open(QIODevice::ReadOnly | QIODevice::Text))
     return;
   QTextStream in(&mapFile);
-  map = make_shared<TowerDefense::Map>(in);
-  mapScene = new MapScene(this, map);
-  ui->graphicsView->setScene(mapScene);
-  connect(mapScene, SIGNAL(selectedTower(Tower *)), this,
-          SLOT(onOpenTowerInspector(Tower *)));
-  connect(map.get(), SIGNAL(cashChanged(int)), this, SLOT(onCashChange(int)));
+
+  map = new Map(in, this);
+  game = new Game(unique_ptr<Map>(map), this);
+  gameScene = new GameScene(*game, this);
+  ui->graphicsView->setScene(gameScene);
+  gameBegin();
 }
 
 void TdMap::on_actionSave_Map_triggered() {
@@ -60,27 +58,28 @@ void TdMap::on_actionSave_Map_triggered() {
 
 void TdMap::on_actionEnable_Draw_Map_Mode_triggered(bool checked) {
   if (!checked)
-    mapScene->setState(MapUiState::DEFAULT);
+    gameScene->setState(GameState::IDLE);
   else
-    mapScene->setState(MapUiState::DRAW_MAP);
+    gameScene->setState(GameState::EDIT_MAP_DRAW);
 }
 
 void TdMap::on_actionSet_Entrance_triggered() {
-  mapScene->setState(MapUiState::SET_ENTRANCE);
+  gameScene->setState(GameState::EDIT_MAP_SET_ENTRANCE);
 }
 
 void TdMap::on_actionSet_Exit_triggered() {
-  mapScene->setState(MapUiState::SET_EXIT);
+  gameScene->setState(GameState::EDIT_MAP_SET_EXIT);
 }
 
-void TdMap::onOpenTowerInspector(Tower *tower) {
-  auto dialog = new TowerInspectorDialog(this, map.get(), tower);
+void TdMap::onOpenTowerInspector(Tower &tower) {
+  auto dialog = new TowerInspectorDialog(*game, tower, this);
   dialog->show();
   dialog->raise();
   dialog->activateWindow();
 }
 
-void TdMap::onCashChange(int cash)
-{
+void TdMap::onCashChange(int cash) {
   ui->statusBar->showMessage(QString("Current cash: %1").arg(cash), 2000);
 }
+
+void TdMap::gameBegin() {}

@@ -2,7 +2,7 @@
 #define TOWERINSPECTORDIALOG_H
 
 #include <QDialog>
-#include "Game/map.h"
+#include "Game/game.h"
 #include "Game/tower.h"
 
 using namespace TowerDefense;
@@ -16,8 +16,7 @@ class TowerInspectorDialog : public QDialog
   Q_OBJECT
 
 public:
-  explicit TowerInspectorDialog(QWidget *parent = 0);
-  TowerInspectorDialog(QWidget *parent, Map *map, Tower *tower);
+  TowerInspectorDialog(Game &game, Tower &tower, QWidget *parent = 0);
   ~TowerInspectorDialog();
 
 private slots:
@@ -30,8 +29,8 @@ private slots:
 private:
   Ui::TowerInspectorDialog *ui;
 
-  Map *map;
-  Tower *tower;
+  Game &game;
+  Tower &tower;
 };
 
 #endif // TOWERINSPECTORDIALOG_H

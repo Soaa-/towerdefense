@@ -17,7 +17,6 @@ SOURCES += main.cpp\
     Game/game.cpp \
     Game/map.cpp \
     Game/tower.cpp \
-    Graphics/mapscene.cpp \
     Graphics/toweritem.cpp \
     Ui/createmapdialog.cpp \
     Ui/placetowerdialog.cpp \
@@ -33,7 +32,6 @@ HEADERS  += \
     Game/critter.h \
     Game/game.h \
     Game/tower.h \
-    Graphics/mapscene.h \
     Graphics/toweritem.h \
     Ui/createmapdialog.h \
     Ui/placetowerdialog.h \

@@ -49,7 +49,7 @@ signals:
   void gameOver();
 
 public slots:
-  void debitCurrency(int amount);
+  bool debitCurrency(int amount);
 
 };
 

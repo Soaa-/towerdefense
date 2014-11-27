@@ -7,8 +7,9 @@
 #include <QFile>
 #include <QTextStream>
 #include <memory>
+#include "Game/game.h"
 #include "Game/map.h"
-#include "Graphics/mapscene.h"
+#include "Graphics/gamescene.h"
 #include "placetowerdialog.h"
 #include "createmapdialog.h"
 #include "towerinspectordialog.h"
@@ -35,13 +36,16 @@ private slots:
   void on_actionSet_Entrance_triggered();
   void on_actionSet_Exit_triggered();
 
-  void onOpenTowerInspector(Tower *tower);
+  void onOpenTowerInspector(Tower &tower);
   void onCashChange(int cash);
 
 private:
   Ui::TdMap *ui;
-  MapScene *mapScene;
-  shared_ptr<TowerDefense::Map> map;
+  GameScene *gameScene;
+  Map *map;
+  Game *game;
+
+  void gameBegin();
 };
 
 #endif // TDMAP_H

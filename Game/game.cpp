@@ -44,5 +44,11 @@ BaseTower *Game::getTower(Coordinate coord) {
   return nullptr;
 }
 
-void Game::debitCurrency(int amount) {}
+bool Game::debitCurrency(int amount) {
+  if (currency - amount < 0)
+    return false;
+  currency -= amount;
+  return true;
+}
+
 }

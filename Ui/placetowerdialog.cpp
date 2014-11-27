@@ -17,12 +17,14 @@ TowerType PlaceTowerDialog::getTowerType()
 {
   switch (ui->TowerTypeBox->currentIndex()) {
   case 0:
-    return TowerType::DIRECT_DAMAGE;
+    return TowerType::BASIC;
   case 1:
-    return TowerType::AOE_DAMAGE;
+    return TowerType::AOE;
   case 2:
     return TowerType::SLOWING;
   case 3:
-    return TowerType::ADDITIONAL_DAMAGE;
+    return TowerType::BURNING;
+  default:
+    return TowerType::BASIC;
   }
 }

@@ -2,6 +2,7 @@
 #define MAPITEM_H
 
 #include <QGraphicsObject>
+#include <QBrush>
 #include <QVector>
 #include <Game/map.h>
 #include <Game/coordinate.h>
@@ -17,7 +18,7 @@ private:
   Coordinate exit;
 
   int cellSize;
-  QVector<QVector<QGraphicsRectItem>> grid;
+  QVector<QVector<QGraphicsRectItem *>> grid;
 
   QBrush entranceBrush;
   QBrush exitBrush;
@@ -27,7 +28,7 @@ private:
   void drawMap();
 
 public:
-  explicit MapItem(Map &map, int cellSize, QObject *parent = 0);
+  explicit MapItem(Map &map, int cellSize, QGraphicsItem *parent = 0);
 
 signals:
 

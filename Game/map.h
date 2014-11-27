@@ -38,13 +38,14 @@ private:
   unique_ptr<Coordinate> getNext(Coordinate coord, const unique_ptr<Coordinate> &prev) const;
 
 public:
-  Map(int sizeX, int sizeY);
-  Map(QTextStream &in);
+  Map(int sizeX, int sizeY, QObject *parent = 0);
+  Map(QTextStream &in, QObject *parent = 0);
   int getSizeX() const;
   int getSizeY() const;
   CellType getCellType(Coordinate coord) const;
 
   Coordinate getEntrance() const;
+  Coordinate getExit() const;
 
   bool isValid() const;
   bool isEntrance(Coordinate coord) const;

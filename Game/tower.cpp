@@ -56,11 +56,15 @@ vector<TowerType> AoeEnhancement::getEnhancementTypes() const {
   return ret;
 }
 
+void SlowingEnhancement::attack(Critter &critter) { critter.freeze(3); }
+
 vector<TowerType> SlowingEnhancement::getEnhancementTypes() const {
   auto ret = tower->getEnhancementTypes();
   ret.push_back(TowerType::SLOWING);
   return ret;
 }
+
+void BurningEnhancement::attack(Critter &critter) { critter.burn(5); }
 
 vector<TowerType> BurningEnhancement::getEnhancementTypes() const {
   auto ret = tower->getEnhancementTypes();

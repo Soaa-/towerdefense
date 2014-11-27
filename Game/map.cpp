@@ -102,11 +102,12 @@ unique_ptr<Coordinate> Map::getNext(Coordinate coord,
   return unique_ptr<Coordinate>(nullptr);
 }
 
-Map::Map(int sizeX, int sizeY)
-    : exit(0, 0), entrance(0, 0),
+Map::Map(int sizeX, int sizeY, QObject *parent)
+    : QObject(parent), exit(0, 0), entrance(0, 0),
       grid(sizeY, vector<CellType>(sizeX, CellType::SCENERY)) {}
 
-Map::Map(QTextStream &in) : exit(0, 0), entrance(0, 0) {
+Map::Map(QTextStream &in, QObject *parent)
+    : QObject(parent), exit(0, 0), entrance(0, 0) {
   QString size = in.readLine();
   int sizeX = size.split(" ")[0].toInt();
   int sizeY = size.split(" ")[1].toInt();
@@ -137,6 +138,8 @@ CellType Map::getCellType(Coordinate coord) const {
 }
 
 Coordinate Map::getEntrance() const { return entrance; }
+
+Coordinate Map::getExit() const { return exit; }
 
 void Map::setCellToType(Coordinate coord, CellType type) {
   grid.at(coord.y).at(coord.x) = type;
