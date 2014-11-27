@@ -17,9 +17,10 @@ class Game : public QObject
 {
   Q_OBJECT
 private:
-  int level;
+  int level = 1;
+  bool isGameOver = false;
   int numCrittersToGenerate;
-  int currency;
+  int currency = 500;
   unique_ptr<Map> map;
   vector<unique_ptr<BaseTower>> towers;
   vector<unique_ptr<Critter>> critters;
@@ -28,6 +29,7 @@ private:
 
   void stepAdvanceCritters();
   void stepAttackCritters();
+  bool isCritterAtExit();
 
 public:
   explicit Game(unique_ptr<Map> map, QObject *parent = 0);
@@ -35,6 +37,7 @@ public:
 
   void placeTower(Coordinate coord, TowerType type);
   void upgradeTower(Coordinate coord);
+  bool debitCurrency(int amount);
 
   void run();
 
@@ -43,15 +46,14 @@ public:
 
 signals:
   void mapCellChanged(int x, int y, CellType type);
-  void newCritter(Critter &critter);
-  void critterChanged(Critter &critter);
-  void towerChanged(Tower &tower);
+  void newCritter(Critter *critter);
+  void newTower(BaseTower *tower);
   void currencyChanged(int amount);
   void turnEnd();
   void gameOver();
 
 public slots:
-  bool debitCurrency(int amount);
+  void creditCurrency(int amount);
 
 };
 

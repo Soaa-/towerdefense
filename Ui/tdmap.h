@@ -41,6 +41,8 @@ private slots:
 
   void on_actionStart_Game_triggered();
 
+  void on_actionGo_triggered();
+
 private:
   Ui::TdMap *ui;
   GameScene *gameScene;

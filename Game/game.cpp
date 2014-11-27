@@ -1,4 +1,6 @@
 #include "game.h"
+#include "sleep.h"
+#include "QCoreApplication"
 
 namespace TowerDefense {
 
@@ -6,8 +8,9 @@ void Game::stepAdvanceCritters() {
   for (auto &critter : critters)
     critter->move();
   if (numCrittersToGenerate != 0) {
-    auto newCritter = CritterFactory::create(map->getEntrance(), level);
-    critters.push_back(unique_ptr<Critter>(newCritter));
+    auto newCrt = CritterFactory::create(*map, level);
+    critters.push_back(unique_ptr<Critter>(newCrt));
+    emit newCritter(newCrt);
     --numCrittersToGenerate;
   }
 }
@@ -15,6 +18,13 @@ void Game::stepAdvanceCritters() {
 void Game::stepAttackCritters() {
   for (auto &tower : towers)
     tower->attack();
+}
+
+bool Game::isCritterAtExit() {
+  for (auto &critter : critters)
+    if (critter->getCoord() == map->getExit())
+      return true;
+  return false;
 }
 
 Game::Game(unique_ptr<Map> map, QObject *parent)
@@ -26,15 +36,28 @@ void Game::placeTower(Coordinate coord, TowerType type) {
   else if (getTower(coord))
     return;
   else {
-    towers.push_back(unique_ptr<BaseTower>(towerFactory.create(coord, type)));
+    auto tower = towerFactory.create(coord, type);
+    if (debitCurrency(tower->getPurchasePrice())) {
+      towers.push_back(unique_ptr<BaseTower>(tower));
+      emit newTower(tower);
+    }
+    else
+      delete tower;
   }
 }
 
 void Game::run() {
-  while (!critters.empty()) {
+  map->generatePath();
+  numCrittersToGenerate = 5 + level / 2;
+  do {
     stepAdvanceCritters();
+    QCoreApplication::processEvents();
+    Sleep::msleep(200);
     stepAttackCritters();
-  }
+    QCoreApplication::processEvents();
+    Sleep::msleep(200);
+  } while (!critters.empty() && !isCritterAtExit());
+  ++level;
 }
 
 Map &Game::getMap() { return *map; }
@@ -45,6 +68,8 @@ BaseTower *Game::getTower(Coordinate coord) {
       return tower.get();
   return nullptr;
 }
+
+void Game::creditCurrency(int amount) { currency += amount; }
 
 bool Game::debitCurrency(int amount) {
   if (currency - amount < 0)

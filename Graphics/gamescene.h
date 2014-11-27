@@ -20,11 +20,11 @@ enum class GameState {
   PLAY_RUN_TURN
 };
 
-class GameScene : public QGraphicsScene
-{
+class GameScene : public QGraphicsScene {
   Q_OBJECT
 private:
-  Game &game;
+  Game *game;
+  int cellSize = 20;
   MapItem *mapItem;
   QVector<TowerItem *> towerItems;
   QVector<CritterItem *> critterItems;
@@ -33,9 +33,20 @@ private:
   TowerType nextTowerType;
 
   void setState(GameState state);
-public:
 
-  explicit GameScene(Game &game, QObject *parent = 0);
+  void mousePressDrawMap(QGraphicsSceneMouseEvent *mouseEvent,
+                         Coordinate coord);
+  void mousePressSetEntrance(QGraphicsSceneMouseEvent *mouseEvent,
+                             Coordinate coord);
+  void mousePressSetExit(QGraphicsSceneMouseEvent *mouseEvent,
+                         Coordinate coord);
+  void mousePressSelectTower(QGraphicsSceneMouseEvent *mouseEvent,
+                             Coordinate coord);
+  void mousePressPlaceTower(QGraphicsSceneMouseEvent *mouseEvent,
+                            Coordinate coord);
+
+public:
+  explicit GameScene(Game *game, QObject *parent = 0);
 
   virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
@@ -51,12 +62,12 @@ public:
   void setStateEditSetEntrance();
   void setStateEditSetExit();
 
-
 signals:
+  void towerSelected(BaseTower *tower);
 
 public slots:
-
-
+  void onNewCritter(Critter *critter);
+  void onNewTower(BaseTower *tower);
 };
 
 #endif // GAMESCENE_H

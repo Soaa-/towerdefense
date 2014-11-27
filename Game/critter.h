@@ -2,6 +2,7 @@
 #define CRITTERGROUP_H
 
 #include <QObject>
+#include "map.h"
 #include "coordinate.h"
 
 namespace TowerDefense {
@@ -13,36 +14,28 @@ private:
   int hp;
   int speed;
   int reward;
-  int numTurnsFrozen;
-  int damagePerTurn;
+  int numTurnsFrozen = 0;
+  int damagePerTurn = 0;
+
+  int pos = 0;
+  const vector<Coordinate> &path;
 
 public:
-  Critter(Coordinate coord, int level, int hp, int speed, int reward)
-      : HasCoordinate(coord), level(level), hp(hp), speed(speed),
-        reward(reward) {}
+  Critter(Coordinate coord, const vector<Coordinate> &path, int level, int hp,
+          int speed, int reward);
   ~Critter() {}
 
-  void move() {
-    hp -= damagePerTurn;
-    if (numTurnsFrozen > 0)
-      --numTurnsFrozen;
-    else
-      this->coord += coord;
-  }
+  void move();
+  void hit(int attackDamage);
+  void freeze(int turns);
+  void burn(int damage);
 
-  void hit(int attackDamage) {
-    hp -= attackDamage;
-    if (hp <= 0)
-      emit death(reward);
-  }
-
-  void freeze(int turns) { numTurnsFrozen = turns; }
-  void burn(int damage) { damagePerTurn = damage; }
-
-  int getHp() const { return hp; }
+  int getHp() const;
 
 signals:
   void death(int reward);
+  void moved(Coordinate coord);
+  void hpChanged(int hp);
 };
 
 class CritterFactory {
@@ -50,11 +43,12 @@ private:
   CritterFactory();
 
 public:
-  static Critter *create(Coordinate coord, int level) {
+  static Critter *create(Map &map, int level) {
     int hp = 15 + level * 3;
     int speed = 1 + level / 3;
     int reward = 5 + level * 2;
-    return new Critter(coord, level, hp, speed, reward);
+    return new Critter(map.getEntrance(), map.getPath(), level, hp, speed,
+                       reward);
   }
 };
 

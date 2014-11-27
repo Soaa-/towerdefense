@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     Game/attack.cpp \
     Game/targeter.cpp \
     Graphics/gamescene.cpp \
-    Graphics/mapitem.cpp
+    Graphics/mapitem.cpp \
+    Game/critter.cpp
 
 HEADERS  += \
     Game/critter.h \
@@ -43,7 +44,8 @@ HEADERS  += \
     Game/attack.h \
     Game/targeter.h \
     Graphics/gamescene.h \
-    Graphics/mapitem.h
+    Graphics/mapitem.h \
+    Game/sleep.h
 
 FORMS    += Ui/createmapdialog.ui \
     Ui/placetowerdialog.ui \

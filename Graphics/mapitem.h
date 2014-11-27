@@ -13,7 +13,7 @@ using namespace TowerDefense;
 class MapItem : public QGraphicsObject {
   Q_OBJECT
 private:
-  Map &map;
+  Map *map;
   Coordinate entrance;
   Coordinate exit;
 
@@ -28,7 +28,7 @@ private:
   void drawMap();
 
 public:
-  explicit MapItem(Map &map, int cellSize, QGraphicsItem *parent = 0);
+  explicit MapItem(Map *map, int cellSize, QGraphicsItem *parent = 0);
 
   virtual QRectF boundingRect() const;
   virtual void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);

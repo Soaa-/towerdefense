@@ -27,12 +27,6 @@ private:
 
   void createCell(int x, int y);
 
-  /**
-   * @brief Map::generatePath
-   * @return True if path successfully generated, false otherwise.
-   */
-  void generatePath();
-
   int getNumPathNeighbors(Coordinate coord) const;
   unique_ptr<Coordinate> getNext(Coordinate coord) const;
   unique_ptr<Coordinate> getNext(Coordinate coord,
@@ -49,6 +43,7 @@ public:
 
   Coordinate getEntrance() const;
   Coordinate getExit() const;
+  const vector<Coordinate> &getPath() const;
 
   bool isValid() const;
   bool isEntrance(Coordinate coord) const;
@@ -59,6 +54,8 @@ public:
   void setCellToType(Coordinate coord, CellType type);
   void setEntrance(Coordinate coord);
   void setExit(Coordinate coord);
+
+  void generatePath();
 
   friend QTextStream &operator<<(QTextStream &os, const Map &map);
 

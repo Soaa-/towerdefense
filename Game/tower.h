@@ -17,7 +17,8 @@ using CritterVector = vector<unique_ptr<Critter>>;
 
 enum class TowerType { BASIC, AOE, SLOWING, BURNING };
 
-class BaseTower : public virtual IHasCoordinate {
+class BaseTower : public QObject, public virtual IHasCoordinate {
+  Q_OBJECT
 protected:
   CritterVector &critters;
 
@@ -39,11 +40,12 @@ public:
   virtual int getLevel() const = 0;
 
   virtual vector<TowerType> getEnhancementTypes() const = 0;
+
+signals:
+  void levelChanged(int newLevel, int cost);
 };
 
-class Tower : public QObject,
-              public BaseTower,
-              public HasCoordinate {
+class Tower : public BaseTower, public HasCoordinate {
   Q_OBJECT
 protected:
   int purchasePrice;
@@ -59,9 +61,9 @@ protected:
   virtual void attack(Critter &target);
 
 public:
-  Tower(CritterVector &critters, const Coordinate &coord,
-        int purchasePrice, int upgradePrice, int refundValue, int attackRange,
-        int attackPower, int rateOfFire);
+  Tower(CritterVector &critters, const Coordinate &coord, int purchasePrice,
+        int upgradePrice, int refundValue, int attackRange, int attackPower,
+        int rateOfFire);
   // Tower(const Tower &tower);
   virtual ~Tower() {}
 
@@ -77,9 +79,6 @@ public:
 
 public slots:
   void upgrade();
-
-signals:
-  void levelChanged(int newLevel, int cost);
 };
 
 class TowerEnhancement : public BaseTower {

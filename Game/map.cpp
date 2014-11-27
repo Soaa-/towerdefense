@@ -77,25 +77,25 @@ unique_ptr<Coordinate> Map::getNext(Coordinate coord,
     return unique_ptr<Coordinate>(nullptr);
   try {
     auto next = new Coordinate(x, y - 1);
-    if (getCellType(*next) == CellType::PATH && *next != *prev)
+    if (getCellType(*next) == CellType::PATH && (!prev || *next != *prev))
       return unique_ptr<Coordinate>(next);
   } catch (std::out_of_range) {
   }
   try {
     auto next = new Coordinate(x, y + 1);
-    if (getCellType(*next) == CellType::PATH && *next != *prev)
+    if (getCellType(*next) == CellType::PATH && (!prev || *next != *prev))
       return unique_ptr<Coordinate>(next);
   } catch (std::out_of_range) {
   }
   try {
     auto next = new Coordinate(x - 1, y);
-    if (getCellType(*next) == CellType::PATH && *next != *prev)
+    if (getCellType(*next) == CellType::PATH && (!prev || *next != *prev))
       return unique_ptr<Coordinate>(next);
   } catch (std::out_of_range) {
   }
   try {
     auto next = new Coordinate(x + 1, y);
-    if (getCellType(*next) == CellType::PATH && *next != *prev)
+    if (getCellType(*next) == CellType::PATH && (!prev || *next != *prev))
       return unique_ptr<Coordinate>(next);
   } catch (std::out_of_range) {
   }
@@ -141,6 +141,8 @@ Coordinate Map::getEntrance() const { return entrance; }
 
 Coordinate Map::getExit() const { return exit; }
 
+const vector<Coordinate> &Map::getPath() const { return path; }
+
 void Map::setCellToType(Coordinate coord, CellType type) {
   grid.at(coord.y).at(coord.x) = type;
   emit cellTypeChanged(coord, type);
@@ -165,15 +167,15 @@ bool Map::isValid() const {
 
   auto cur = unique_ptr<Coordinate>(new Coordinate(entrance));
   auto next = getNext(*cur);
-  while (*next != exit) {
+  do {
     if (!next) // no next cell
       return false;
 
     // advance cursor
     auto newCur = std::move(next);
-    next = getNext(*next, cur);
+    next = getNext(*newCur, cur);
     cur = std::move(newCur);
-  }
+  } while (*next != exit);
 
   return true;
 }

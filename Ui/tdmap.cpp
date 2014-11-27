@@ -21,15 +21,11 @@ void TdMap::on_actionPurchase_Tower_triggered() {
 void TdMap::on_actionNew_Game_triggered() {
   auto dialog = new CreateMapDialog(this);
   if (dialog->exec()) {
-    map = new Map(dialog->getHSize(), dialog->getVSize(), this);
+    map = new Map(dialog->getHSize(), dialog->getVSize());
     game = new Game(unique_ptr<Map>(map), this);
-    // TODO: Make ownership semantics more consistent, maybe...
-    gameScene = new GameScene(*game, this);
+    gameScene = new GameScene(game, this);
     ui->graphicsView->setScene(gameScene);
-
-    // TODO: Implement gameBegin()
-    // TODO: Shouldn't begin game here. Put in editing mode first.
-    gameBegin();
+    setUiStateIdle();
   }
 }
 
@@ -42,9 +38,9 @@ void TdMap::on_actionLoad_Map_triggered() {
 
   map = new Map(in);
   game = new Game(unique_ptr<Map>(map), this);
-  gameScene = new GameScene(*game, this);
+  gameScene = new GameScene(game, this);
   ui->graphicsView->setScene(gameScene);
-  gameBegin();
+  setUiStateIdle();
 }
 
 void TdMap::on_actionSave_Map_triggered() {
@@ -62,10 +58,14 @@ void TdMap::on_actionSave_Map_triggered() {
 }
 
 void TdMap::on_actionEnable_Draw_Map_Mode_triggered(bool checked) {
-  if (!checked)
+  if (!checked) {
+    setUiStateIdle();
     gameScene->setStateIdle();
-  else
+  }
+  else {
+    setUiStateEditMap();
     gameScene->setStateEditDraw();
+  }
 }
 
 void TdMap::on_actionSet_Entrance_triggered() {
@@ -77,8 +77,14 @@ void TdMap::on_actionSet_Exit_triggered() {
 }
 
 void TdMap::on_actionStart_Game_triggered() {
+  gameBegin();
+}
+
+void TdMap::on_actionGo_triggered()
+{
+  setUiStatePlayRun();
+  game->run();
   setUiStatePlayIdle();
-  gameScene->setStatePlayIdle();
 }
 
 void TdMap::onOpenTowerInspector(Tower &tower) {
@@ -93,8 +99,13 @@ void TdMap::onCashChange(int cash) {
 }
 
 void TdMap::gameBegin() {
-  setUiStatePlayIdle();
-  gameScene->setStatePlayIdle();
+  if (game->getMap().isValid()) {
+    setUiStatePlayIdle();
+    gameScene->setStatePlayIdle();
+  }
+  else {
+    ui->statusBar->showMessage("Map is invalid.");
+  }
 }
 
 void TdMap::setUiStateIdle()
@@ -108,6 +119,8 @@ void TdMap::setUiStateIdle()
   ui->actionStart_Game->setVisible(true);
   ui->actionGo->setVisible(false);
   ui->actionPurchase_Tower->setVisible(false);
+
+  ui->statusBar->showMessage("Welcome to Tower Defense.");
 }
 
 void TdMap::setUiStatePlayIdle() {
@@ -119,12 +132,18 @@ void TdMap::setUiStatePlayIdle() {
 
   ui->actionStart_Game->setVisible(false);
   ui->actionGo->setVisible(true);
+  ui->actionGo->setEnabled(true);
   ui->actionPurchase_Tower->setVisible(true);
+  ui->actionPurchase_Tower->setEnabled(true);
+
+  ui->statusBar->showMessage("Build your towers now.");
 }
 
 void TdMap::setUiStatePlayRun() {
   ui->actionGo->setEnabled(false);
   ui->actionPurchase_Tower->setEnabled(false);
+
+  // TODO show wave #
 }
 
 void TdMap::setUiStateEditMap() {
@@ -137,5 +156,6 @@ void TdMap::setUiStateEditMap() {
   ui->actionStart_Game->setVisible(false);
   ui->actionSet_Entrance->setVisible(true);
   ui->actionSet_Exit->setVisible(true);
-}
 
+  ui->statusBar->showMessage("Draw your map.");
+}

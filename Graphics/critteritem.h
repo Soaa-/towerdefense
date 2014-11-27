@@ -3,15 +3,21 @@
 
 #include <QGraphicsObject>
 #include <QPainter>
+#include "Game/coordinate.h"
+
+using TowerDefense::Coordinate;
 
 class CritterItem : public QGraphicsObject {
   Q_OBJECT
 private:
+  int cellSize;
   QPen pen;
   QBrush brush;
 
+  int hp;
+
 public:
-  CritterItem(QGraphicsItem *parent = 0);
+  CritterItem(int cellSize, int hp, QGraphicsItem *parent = 0);
 
   virtual QRectF boundingRect() const;
   virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem*,
@@ -19,7 +25,9 @@ public:
 signals:
 
 public slots:
-  void death();
+  void onDeath(int);
+  void onMove(Coordinate coord);
+  void onHpChanged(int hp);
 };
 
 #endif // CRITTERITEM_H
