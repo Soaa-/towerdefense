@@ -54,7 +54,13 @@ public:
   }
 
 public slots:
-  void setLevel(int level, int) { this->level = level; }
+  void setLevel(int level, int) {
+    this->level = level;
+    update(boundingRect());
+  }
+
+signals:
+  void changed();
 };
 
 #endif // TOWERITEM_H

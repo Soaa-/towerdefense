@@ -5,6 +5,7 @@ using std::make_shared;
 
 TdMap::TdMap(QWidget *parent) : QMainWindow(parent), ui(new Ui::TdMap) {
   ui->setupUi(this);
+  setUiStateIdle();
 }
 
 TdMap::~TdMap() { delete ui; }
@@ -12,7 +13,8 @@ TdMap::~TdMap() { delete ui; }
 void TdMap::on_actionPurchase_Tower_triggered() {
   auto dialog = new PlaceTowerDialog(this);
   if (dialog->exec()) {
-    // TODO: Place Tower
+    auto type = dialog->getTowerType();
+    gameScene->setStatePlaceTower(type);
   }
 }
 
@@ -24,7 +26,10 @@ void TdMap::on_actionNew_Game_triggered() {
     // TODO: Make ownership semantics more consistent, maybe...
     gameScene = new GameScene(*game, this);
     ui->graphicsView->setScene(gameScene);
-    gameBegin(); // TODO: Implement gameBegin()
+
+    // TODO: Implement gameBegin()
+    // TODO: Shouldn't begin game here. Put in editing mode first.
+    gameBegin();
   }
 }
 
@@ -58,17 +63,22 @@ void TdMap::on_actionSave_Map_triggered() {
 
 void TdMap::on_actionEnable_Draw_Map_Mode_triggered(bool checked) {
   if (!checked)
-    gameScene->setState(GameState::IDLE);
+    gameScene->setStateIdle();
   else
-    gameScene->setState(GameState::EDIT_MAP_DRAW);
+    gameScene->setStateEditDraw();
 }
 
 void TdMap::on_actionSet_Entrance_triggered() {
-  gameScene->setState(GameState::EDIT_MAP_SET_ENTRANCE);
+  gameScene->setStateEditSetEntrance();
 }
 
 void TdMap::on_actionSet_Exit_triggered() {
-  gameScene->setState(GameState::EDIT_MAP_SET_EXIT);
+  gameScene->setStateEditSetExit();
+}
+
+void TdMap::on_actionStart_Game_triggered() {
+  setUiStatePlayIdle();
+  gameScene->setStatePlayIdle();
 }
 
 void TdMap::onOpenTowerInspector(Tower &tower) {
@@ -79,7 +89,53 @@ void TdMap::onOpenTowerInspector(Tower &tower) {
 }
 
 void TdMap::onCashChange(int cash) {
-  ui->statusBar->showMessage(QString("Current cash: %1").arg(cash), 2000);
+  ui->statusBar->showMessage(QString("Current cash: %1").arg(cash));
 }
 
-void TdMap::gameBegin() {}
+void TdMap::gameBegin() {
+  setUiStatePlayIdle();
+  gameScene->setStatePlayIdle();
+}
+
+void TdMap::setUiStateIdle()
+{
+  ui->actionEnable_Draw_Map_Mode->setEnabled(true);
+  ui->actionSave_Map->setEnabled(true);
+
+  ui->actionSet_Entrance->setVisible(false);
+  ui->actionSet_Exit->setVisible(false);
+
+  ui->actionStart_Game->setVisible(true);
+  ui->actionGo->setVisible(false);
+  ui->actionPurchase_Tower->setVisible(false);
+}
+
+void TdMap::setUiStatePlayIdle() {
+  ui->actionEnable_Draw_Map_Mode->setEnabled(false);
+  ui->actionSave_Map->setEnabled(false);
+
+  ui->actionSet_Entrance->setVisible(false);
+  ui->actionSet_Exit->setVisible(false);
+
+  ui->actionStart_Game->setVisible(false);
+  ui->actionGo->setVisible(true);
+  ui->actionPurchase_Tower->setVisible(true);
+}
+
+void TdMap::setUiStatePlayRun() {
+  ui->actionGo->setEnabled(false);
+  ui->actionPurchase_Tower->setEnabled(false);
+}
+
+void TdMap::setUiStateEditMap() {
+  ui->actionGo->setVisible(false);
+  ui->actionPurchase_Tower->setVisible(false);
+
+  ui->actionEnable_Draw_Map_Mode->setEnabled(true);
+  ui->actionSave_Map->setEnabled(true);
+
+  ui->actionStart_Game->setVisible(false);
+  ui->actionSet_Entrance->setVisible(true);
+  ui->actionSet_Exit->setVisible(true);
+}
+

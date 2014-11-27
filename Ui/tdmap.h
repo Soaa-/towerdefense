@@ -39,6 +39,8 @@ private slots:
   void onOpenTowerInspector(Tower &tower);
   void onCashChange(int cash);
 
+  void on_actionStart_Game_triggered();
+
 private:
   Ui::TdMap *ui;
   GameScene *gameScene;
@@ -46,6 +48,11 @@ private:
   Game *game;
 
   void gameBegin();
+
+  void setUiStateIdle();
+  void setUiStatePlayIdle();
+  void setUiStatePlayRun();
+  void setUiStateEditMap();
 };
 
 #endif // TDMAP_H

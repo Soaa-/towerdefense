@@ -53,16 +53,19 @@ void MapItem::onCellTypeChanged(Coordinate coord, CellType type) {
   case CellType::PATH:
     grid[coord.y][coord.x]->setBrush(pathBrush);
   }
+  update();
 }
 
 void MapItem::onEntranceChanged(Coordinate coord) {
   grid[entrance.y][entrance.x]->setBrush(pathBrush);
   grid[coord.y][coord.x]->setBrush(entranceBrush);
   entrance = coord;
+  update();
 }
 
 void MapItem::onExitChanged(Coordinate coord) {
   grid[exit.y][exit.x]->setBrush(pathBrush);
   grid[coord.y][coord.x]->setBrush(exitBrush);
   exit = coord;
+  update();
 }

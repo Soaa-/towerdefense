@@ -15,9 +15,9 @@ enum class GameState {
   EDIT_MAP_DRAW,
   EDIT_MAP_SET_ENTRANCE,
   EDIT_MAP_SET_EXIT,
-  PLAY_TURN,
-  PLAY_INTERMISSION_SELECT_TOWER,
-  PLAY_INTERMISSION_PLACE_TOWER
+  PLAY_INTERMISSION_IDLE,
+  PLAY_INTERMISSION_PLACE_TOWER,
+  PLAY_RUN_TURN
 };
 
 class GameScene : public QGraphicsScene
@@ -30,7 +30,9 @@ private:
   QVector<CritterItem *> critterItems;
 
   GameState state;
+  TowerType nextTowerType;
 
+  void setState(GameState state);
 public:
 
   explicit GameScene(Game &game, QObject *parent = 0);
@@ -38,7 +40,17 @@ public:
   virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
   void updateMap();
-  void setState(GameState state);
+
+  void setStateIdle();
+
+  void setStatePlayIdle();
+  void setStatePlaceTower(TowerType type);
+  void setStatePlayRunTurn();
+
+  void setStateEditDraw();
+  void setStateEditSetEntrance();
+  void setStateEditSetExit();
+
 
 signals:
 
