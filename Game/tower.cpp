@@ -20,9 +20,11 @@ vector<Critter *> Tower::acquireTargets() {
   for (auto &critter : critters)
     if (distanceTo(*critter) <= range)
       result.push_back(critter.get());
-  std::sort(result.begin(), result.end());
-  vector<Critter *> ret(1, result[0]);
-  return ret;
+  // std::sort(result.begin(), result.end(), targeter);
+  if (result.empty())
+    return vector<Critter *>();
+  else
+    return vector<Critter *>(1, result[0]);
 }
 
 void Tower::attack(Critter &target) { target.hit(attackPower); }

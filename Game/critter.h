@@ -34,6 +34,7 @@ public:
 
 signals:
   void death(int reward);
+  void death(Critter *);
   void moved(Coordinate coord);
   void hpChanged(int hp);
 };

@@ -10,6 +10,9 @@ void Game::stepAdvanceCritters() {
   if (numCrittersToGenerate != 0) {
     auto newCrt = CritterFactory::create(*map, level);
     critters.push_back(unique_ptr<Critter>(newCrt));
+    connect(newCrt, SIGNAL(death(int)), this, SLOT(creditCurrency(int)));
+    connect(newCrt, SIGNAL(death(Critter *)), this,
+            SLOT(onCritterDeath(Critter *)));
     emit newCritter(newCrt);
     --numCrittersToGenerate;
   }
@@ -40,8 +43,7 @@ void Game::placeTower(Coordinate coord, TowerType type) {
     if (debitCurrency(tower->getPurchasePrice())) {
       towers.push_back(unique_ptr<BaseTower>(tower));
       emit newTower(tower);
-    }
-    else
+    } else
       delete tower;
   }
 }
@@ -56,7 +58,9 @@ void Game::run() {
     stepAttackCritters();
     QCoreApplication::processEvents();
     Sleep::msleep(200);
-  } while (!critters.empty() && !isCritterAtExit());
+    qDebug() << currency;
+  } while ((!critters.empty() || numCrittersToGenerate > 0) &&
+           !isCritterAtExit());
   ++level;
 }
 
@@ -70,6 +74,13 @@ BaseTower *Game::getTower(Coordinate coord) {
 }
 
 void Game::creditCurrency(int amount) { currency += amount; }
+
+void Game::onCritterDeath(Critter *critter) {
+  critters.erase(std::find_if(critters.begin(), critters.end(),
+                              [&](unique_ptr<Critter> const &p)
+                                  -> bool { return p.get() == critter; }),
+                 critters.end());
+}
 
 bool Game::debitCurrency(int amount) {
   if (currency - amount < 0)

@@ -21,8 +21,11 @@ void Critter::move() {
 
 void Critter::hit(int attackDamage) {
   hp -= attackDamage;
-  if (hp <= 0)
+  emit hpChanged(hp);
+  if (hp <= 0) {
     emit death(reward);
+    emit death(this);
+  }
 }
 
 void Critter::freeze(int turns) { numTurnsFrozen = turns; }

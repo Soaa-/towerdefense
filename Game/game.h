@@ -7,6 +7,7 @@
 #include "map.h"
 #include "tower.h"
 #include "critter.h"
+#include "QDebug"
 
 namespace TowerDefense {
 
@@ -54,6 +55,7 @@ signals:
 
 public slots:
   void creditCurrency(int amount);
+  void onCritterDeath(Critter *critter);
 
 };
 
