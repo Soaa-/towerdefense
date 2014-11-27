@@ -32,7 +32,7 @@ void Tower::upgrade() {
   attackPower *= 1.2;
   upgradePrice *= 1.5;
   refundValue *= 1.3;
-  emit levelChanged(level, upgradePrice);
+  emit levelChanged(level);
 }
 
 void BaseTower::attack() {
@@ -72,6 +72,6 @@ vector<TowerType> BurningEnhancement::getEnhancementTypes() const {
   return ret;
 }
 
-void TowerEnhancement::attack() { tower->attack(); }
+
 
 } // namespace TowerDefense

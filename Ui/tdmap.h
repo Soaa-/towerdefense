@@ -36,7 +36,7 @@ private slots:
   void on_actionSet_Entrance_triggered();
   void on_actionSet_Exit_triggered();
 
-  void onOpenTowerInspector(Tower &tower);
+  void onOpenTowerInspector(BaseTower *tower);
   void onCashChange(int cash);
 
   void on_actionStart_Game_triggered();

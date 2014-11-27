@@ -49,7 +49,7 @@ void TowerItem::setCoord(TowerDefense::Coordinate coord) {
   update(boundingRect());
 }
 
-void TowerItem::setLevel(int level, int) {
+void TowerItem::setLevel(int level) {
   this->level = level;
   update(boundingRect());
 }

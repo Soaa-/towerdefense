@@ -25,6 +25,8 @@ void TdMap::on_actionNew_Game_triggered() {
     game = new Game(unique_ptr<Map>(map), this);
     gameScene = new GameScene(game, this);
     ui->graphicsView->setScene(gameScene);
+    connect(gameScene, SIGNAL(towerSelected(BaseTower *)), this,
+            SLOT(onOpenTowerInspector(BaseTower *)));
     setUiStateIdle();
   }
 }
@@ -40,6 +42,8 @@ void TdMap::on_actionLoad_Map_triggered() {
   game = new Game(unique_ptr<Map>(map), this);
   gameScene = new GameScene(game, this);
   ui->graphicsView->setScene(gameScene);
+  connect(gameScene, SIGNAL(towerSelected(BaseTower *)), this,
+          SLOT(onOpenTowerInspector(BaseTower *)));
   setUiStateIdle();
 }
 
@@ -61,8 +65,7 @@ void TdMap::on_actionEnable_Draw_Map_Mode_triggered(bool checked) {
   if (!checked) {
     setUiStateIdle();
     gameScene->setStateIdle();
-  }
-  else {
+  } else {
     setUiStateEditMap();
     gameScene->setStateEditDraw();
   }
@@ -72,23 +75,18 @@ void TdMap::on_actionSet_Entrance_triggered() {
   gameScene->setStateEditSetEntrance();
 }
 
-void TdMap::on_actionSet_Exit_triggered() {
-  gameScene->setStateEditSetExit();
-}
+void TdMap::on_actionSet_Exit_triggered() { gameScene->setStateEditSetExit(); }
 
-void TdMap::on_actionStart_Game_triggered() {
-  gameBegin();
-}
+void TdMap::on_actionStart_Game_triggered() { gameBegin(); }
 
-void TdMap::on_actionGo_triggered()
-{
+void TdMap::on_actionGo_triggered() {
   setUiStatePlayRun();
   game->run();
   setUiStatePlayIdle();
 }
 
-void TdMap::onOpenTowerInspector(Tower &tower) {
-  auto dialog = new TowerInspectorDialog(*game, tower, this);
+void TdMap::onOpenTowerInspector(BaseTower *tower) {
+  auto dialog = new TowerInspectorDialog(game, tower, this);
   dialog->show();
   dialog->raise();
   dialog->activateWindow();
@@ -102,14 +100,12 @@ void TdMap::gameBegin() {
   if (game->getMap().isValid()) {
     setUiStatePlayIdle();
     gameScene->setStatePlayIdle();
-  }
-  else {
+  } else {
     ui->statusBar->showMessage("Map is invalid.");
   }
 }
 
-void TdMap::setUiStateIdle()
-{
+void TdMap::setUiStateIdle() {
   ui->actionEnable_Draw_Map_Mode->setEnabled(true);
   ui->actionSave_Map->setEnabled(true);
 

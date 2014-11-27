@@ -29,7 +29,7 @@ public:
   void setCoord(Coordinate coord);
 
 public slots:
-  void setLevel(int level, int);
+  void setLevel(int level);
 };
 
 #endif // TOWERITEM_H

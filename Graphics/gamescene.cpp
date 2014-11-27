@@ -144,8 +144,8 @@ void GameScene::onNewCritter(Critter *critter) {
 void GameScene::onNewTower(BaseTower *tower) {
   auto towerItem = new TowerItem(cellSize, tower->getLevel(),
                                  TowerType::BASIC);
-  connect(tower, SIGNAL(levelChanged(int, int)), towerItem,
-          SLOT(setLevel(int, int)));
+  connect(tower, SIGNAL(levelChanged(int)), towerItem,
+          SLOT(setLevel(int)));
   towerItem->setCoord(tower->getCoord());
   this->addItem(towerItem);
 }

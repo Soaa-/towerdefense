@@ -41,8 +41,10 @@ public:
 
   virtual vector<TowerType> getEnhancementTypes() const = 0;
 
+  virtual void upgrade() = 0;
+
 signals:
-  void levelChanged(int newLevel, int cost);
+  void levelChanged(int newLevel);
 };
 
 class Tower : public BaseTower, public HasCoordinate {
@@ -77,8 +79,7 @@ public:
 
   virtual vector<TowerType> getEnhancementTypes() const;
 
-public slots:
-  void upgrade();
+  virtual void upgrade();
 };
 
 class TowerEnhancement : public BaseTower {
@@ -105,7 +106,8 @@ public:
   virtual int getRateOfFire() const { return tower->getRateOfFire(); }
   virtual int getLevel() const { return tower->getLevel(); }
 
-  virtual void attack();
+  virtual void attack() { tower->attack(); }
+  virtual void upgrade() { tower->upgrade(); }
 };
 
 class AoeEnhancement : public TowerEnhancement {

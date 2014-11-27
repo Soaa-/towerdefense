@@ -18,7 +18,7 @@
     <widget class="QComboBox" name="TowerTypeBox">
      <item>
       <property name="text">
-       <string>Direct Damage</string>
+       <string>Basic</string>
       </property>
      </item>
      <item>
@@ -28,12 +28,12 @@
      </item>
      <item>
       <property name="text">
-       <string>Slowing</string>
+       <string>Freezing</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Additional damage</string>
+       <string>Burning</string>
       </property>
      </item>
     </widget>
