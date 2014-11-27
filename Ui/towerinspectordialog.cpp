@@ -16,7 +16,6 @@ TowerInspectorDialog::~TowerInspectorDialog() { delete ui; }
 void TowerInspectorDialog::on_sellTowerButton_clicked() {}
 
 void TowerInspectorDialog::on_UpgradeTowerButton_clicked() {
-  // TODO: implement cash verification
   if (game.debitCurrency(tower.getUpgradePrice()))
     tower.upgrade();
 }

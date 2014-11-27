@@ -37,6 +37,8 @@ void Game::run() {
   }
 }
 
+Map &Game::getMap() { return *map; }
+
 BaseTower *Game::getTower(Coordinate coord) {
   for (auto const &tower : towers)
     if (tower->getCoord() == coord)
@@ -50,5 +52,4 @@ bool Game::debitCurrency(int amount) {
   currency -= amount;
   return true;
 }
-
 }

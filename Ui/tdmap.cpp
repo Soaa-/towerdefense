@@ -35,7 +35,7 @@ void TdMap::on_actionLoad_Map_triggered() {
     return;
   QTextStream in(&mapFile);
 
-  map = new Map(in, this);
+  map = new Map(in);
   game = new Game(unique_ptr<Map>(map), this);
   gameScene = new GameScene(*game, this);
   ui->graphicsView->setScene(gameScene);

@@ -35,11 +35,14 @@ private:
 
   int getNumPathNeighbors(Coordinate coord) const;
   unique_ptr<Coordinate> getNext(Coordinate coord) const;
-  unique_ptr<Coordinate> getNext(Coordinate coord, const unique_ptr<Coordinate> &prev) const;
+  unique_ptr<Coordinate> getNext(Coordinate coord,
+                                 const unique_ptr<Coordinate> &prev) const;
 
 public:
   Map(int sizeX, int sizeY, QObject *parent = 0);
   Map(QTextStream &in, QObject *parent = 0);
+  ~Map() {}
+
   int getSizeX() const;
   int getSizeY() const;
   CellType getCellType(Coordinate coord) const;

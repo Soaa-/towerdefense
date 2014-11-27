@@ -35,8 +35,15 @@ MapItem::MapItem(Map &map, int cellSize, QGraphicsItem *parent)
       int wy = cellSize * y;
       grid[y][x] = new QGraphicsRectItem(0, 0, cellSize, cellSize, this);
       grid[y][x]->setPos(wx, wy);
+      grid[y][x]->setPen(QPen(Qt::NoPen));
     }
+  drawMap();
 }
+
+QRectF MapItem::boundingRect() const { return QRectF(0, 0, 0, 0); }
+
+void MapItem::paint(QPainter *, const QStyleOptionGraphicsItem *,
+                    QWidget *) {}
 
 void MapItem::onCellTypeChanged(Coordinate coord, CellType type) {
   switch (type) {

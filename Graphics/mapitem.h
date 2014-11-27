@@ -3,14 +3,14 @@
 
 #include <QGraphicsObject>
 #include <QBrush>
+#include <QPen>
 #include <QVector>
 #include <Game/map.h>
 #include <Game/coordinate.h>
 
 using namespace TowerDefense;
 
-class MapItem : public QGraphicsObject
-{
+class MapItem : public QGraphicsObject {
   Q_OBJECT
 private:
   Map &map;
@@ -29,6 +29,9 @@ private:
 
 public:
   explicit MapItem(Map &map, int cellSize, QGraphicsItem *parent = 0);
+
+  virtual QRectF boundingRect() const;
+  virtual void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
 
 signals:
 

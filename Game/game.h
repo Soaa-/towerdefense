@@ -31,12 +31,14 @@ private:
 
 public:
   explicit Game(unique_ptr<Map> map, QObject *parent = 0);
+  ~Game() {}
 
   void placeTower(Coordinate coord, TowerType type);
   void upgradeTower(Coordinate coord);
 
   void run();
 
+  Map &getMap();
   BaseTower *getTower(Coordinate coord);
 
 signals:
