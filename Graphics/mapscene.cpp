@@ -17,8 +17,7 @@ void MapScene::mousePressDefault(QGraphicsSceneMouseEvent *mouseEvent, int cx,
   Tower *tower;
   switch (mouseEvent->button()) {
   case Qt::LeftButton:
-    map->getCell(cx, cy)->getTower();
-    tower = map->getCell(cx, cy)->getTower();
+    // tower = map->getCell(cx, cy)->getTower();
     if (tower) {
       emit selectedTower(tower);
     }
@@ -32,10 +31,10 @@ void MapScene::mousePressDrawMap(QGraphicsSceneMouseEvent *mouseEvent, int cx,
                                  int cy) {
   switch (mouseEvent->button()) {
   case Qt::LeftButton:
-    map->setCellToType(cx, cy, CellType::PATH);
+    // map->setCellToType(cx, cy, CellType::PATH);
     break;
   case Qt::RightButton:
-    map->setCellToType(cx, cy, CellType::SCENERY);
+    // map->setCellToType(cx, cy, CellType::SCENERY);
     break;
   default:
     break;
@@ -46,7 +45,7 @@ void MapScene::mousePressSetEntrance(QGraphicsSceneMouseEvent *mouseEvent,
                                      int cx, int cy) {
   switch (mouseEvent->button()) {
   case Qt::LeftButton:
-    map->setEntrance(cx, cy);
+    // map->setEntrance(cx, cy);
     break;
   default:
     break;
@@ -58,7 +57,7 @@ void MapScene::mousePressSetExit(QGraphicsSceneMouseEvent *mouseEvent, int cx,
                                  int cy) {
   switch (mouseEvent->button()) {
   case Qt::LeftButton:
-    map->setExit(cx, cy);
+    // map->setExit(cx, cy);
     break;
   default:
     break;
@@ -72,8 +71,8 @@ void MapScene::mousePressPlaceTower(QGraphicsSceneMouseEvent *mouseEvent,
   Tower *tower;
   switch (mouseEvent->button()) {
   case Qt::LeftButton:
-    map->placeTower(cx, cy, towerFactory(nextTowerType));
-    cell = map->getCell(cx, cy).get();
+    // map->placeTower(cx, cy, towerFactory(nextTowerType));
+    // cell = map->getCell(cx, cy).get();
     tower = cell->getTower();
     if (!tower && cell->getType() == CellType::SCENERY)
       cell->placeTower(towerFactory(nextTowerType));
